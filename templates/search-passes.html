@@ -1,81 +1,78 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="col-sm-12">
-    <div class="card">
-        <div class="card-header">
-           
-    
-                <div class="card-block">
-                    <h4 class="sub-title">Search Passes </h4>
-                    <form  method="GET">
-                        
-                        {% csrf_token %}
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Search(By Passnumber)</label>
-                            <div class="col-sm-10">
-                                <input type="text" id="query" name="query" class="form-control" required="">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Bus Pass System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 2rem;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Search Results</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if userpasses %}
+            {% for pass in userpasses %}
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Pass #{{ pass.passnumber }}</h5>
+                        <div>
+                            <button onclick="window.print()" class="btn btn-secondary btn-sm">Print</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {% if pass.profile_pic1 %}
+                                    <img src="{{ pass.profile_pic1.url }}" alt="Profile Picture" class="img-fluid rounded">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <p><strong>Name:</strong> {{ pass.fullname }}</p>
+                                <p><strong>Category:</strong> {{ pass.category_id.categoryname }}</p>
+                                <p><strong>Valid From:</strong> {{ pass.fromdate }}</p>
+                                <p><strong>Valid To:</strong> {{ pass.todate }}</p>
+                                <p><strong>Source:</strong> {{ pass.source }}</p>
+                                <p><strong>Destination:</strong> {{ pass.destinations }}</p>
                             </div>
                         </div>
-                       
-                     
-                        <button type="submit" class="btn btn-primary btn-user btn-block">Search</button>    
-                                </form>
-                            
-                                </div>
-                                                      
-                            
-           
-            <div class="card-header-right">
-                <ul class="list-unstyled card-option">
-                    <li><i class="fa fa-chevron-left"></i></li>
-                    <li><i class="fa fa-window-maximize full-card"></i></li>
-                    <li><i class="fa fa-minus minimize-card"></i></li>
-                    <li><i class="fa fa-refresh reload-card"></i></li>
-                    <li><i class="fa fa-times close-card"></i></li>
-                </ul>
-            </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            {% if request.GET.query %}
+                <div class="alert alert-info">
+                    No passes found matching your search criteria.
+                </div>
+            {% endif %}
+        {% endif %}
 
-        </div>
-        <div class="card-block table-border-style">
-            <div class="table-responsive">
-                
-                
-                {% include 'includes/messages.html' %}
-                {% for i in userpasses %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>S.NO</th>
-                           <th>Pass Number</th>
-                            <th>Full Name</th>
-                            <th>Contact Number</th>
-                            <th>Email</th>
-                            <th>Creation Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        <tr>
-                            <th scope="row">{{ i.id}}</th>
-                            <td>{{ i.passnumber}}</td>
-                            <td>{{ i.fullname}}</td>
-                            <td>{{ i.mobilenumber}}</td>
-                            <td>{{ i.email}}</td>
-                            <td>{{ i.passcreated_at}}</td>
-                           
-                            <td><a href="{% url 'view_passes' i.id %}" class="btn btn-success">View </a>&nbsp;<a href="{% url 'delete_passes' i.id %}" class="btn btn-danger">Delete</a></td>
-                        </tr>
-                        <tr>
-                        {% empty %}
-                        <td>No Record found.</td></tr>
-                       
-                    </tbody>
-                </table>
-            
-            </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'customer' %}" class="btn btn-primary">Back to Customer Portal</a>
         </div>
     </div>
-                    </div>                
-                    {% endfor %}
-{% endblock %}
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

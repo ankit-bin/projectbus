@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Pass Details</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Pass Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center mb-3">
+                    {% if pass.profile_pic1 %}
+                        <img src="{{ pass.profile_pic1.url }}" alt="Profile Picture" class="img-fluid rounded" style="max-width: 200px;">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <p><strong>Pass Number:</strong> {{ pass.passnumber }}</p>
+                    <p><strong>Full Name:</strong> {{ pass.fullname }}</p>
+                    <p><strong>Gender:</strong> {{ pass.gender }}</p>
+                    <p><strong>Mobile Number:</strong> {{ pass.mobilenumber }}</p>
+                    <p><strong>Email:</strong> {{ pass.email }}</p>
+                    <p><strong>Identity Type:</strong> {{ pass.identitytype }}</p>
+                    <p><strong>Identity Card Number:</strong> {{ pass.identitycardnumber }}</p>
+                    <p><strong>Category:</strong> {{ pass.category_id.categoryname }}</p>
+                    <p><strong>Source:</strong> {{ pass.source }}</p>
+                    <p><strong>Destination:</strong> {{ pass.destinations }}</p>
+                    <p><strong>Valid From:</strong> {{ pass.fromdate }}</p>
+                    <p><strong>Valid To:</strong> {{ pass.todate }}</p>
+                    <p><strong>Cost:</strong> ₹{{ pass.cost }}</p>
+                    <p><strong>Created At:</strong> {{ pass.passcreated_at }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-3">
+        <a href="{% url 'customer' %}" class="btn btn-primary">Back to Customer Portal</a>
+    </div>
+</div>
+{% endblock %} 

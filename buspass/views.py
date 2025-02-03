@@ -23,6 +23,78 @@ def LOGIN(request):
     return render(request, 'login.html')
 
 
+
+def view_customer_pass(request):
+    if request.method == "GET":
+        pass_number = request.GET.get('pass_number')
+        dob = request.GET.get('dob')
+        
+        if pass_number and dob:
+            try:
+                pass_details = Passes.objects.get(passnumber=pass_number)
+                return render(request, 'view_customer_pass.html', {'pass': pass_details})
+            except Passes.DoesNotExist:
+                messages.error(request, 'Pass not found')
+                return redirect('customer')
+    
+    return redirect('customer')
+
+def add_customer_pass(request):
+    if request.method == "POST":
+        try:
+            # Get form data
+            name = request.POST.get('name')
+            gender = request.POST.get('gender')
+            profile_pic = request.FILES.get('profile_pic')
+            mobile = request.POST.get('contact')
+            email = request.POST.get('email')
+            identity_type = request.POST.get('identity_type')
+            identity_number = request.POST.get('identity_number')
+            category = request.POST.get('category')
+            source = request.POST.get('source')
+            destination = request.POST.get('destination')
+            from_date = request.POST.get('from_date')
+            to_date = request.POST.get('to_date')
+            cost = request.POST.get('cost')
+
+            # Generate random pass number
+            pass_number = random.randint(100000000, 999999999)
+            
+            # Get category instance
+            category_instance = Category.objects.get(id=category)
+            
+            # Create new pass
+            new_pass = Passes(
+                passnumber=pass_number,
+                fullname=name,
+                gender=gender,
+                profile_pic1=profile_pic,
+                mobilenumber=mobile,
+                email=email,
+                identitytype=identity_type,
+                identitycardnumber=identity_number,
+                category_id=category_instance,
+                source=source,
+                destinations=destination,
+                fromdate=from_date,
+                todate=to_date,
+                cost=cost
+            )
+            new_pass.save()
+            messages.success(request, 'Your pass application has been submitted successfully! Your pass number is: ' + str(pass_number))
+        except Exception as e:
+            messages.error(request, f'Error submitting application: {str(e)}')
+        
+        return redirect('customer')
+    
+    # If GET request, get categories for the form
+    categories = Category.objects.all()
+    return render(request, 'customer.html', {'categories': categories})
+
+
+
+
+
 def doLogin(request):
     if request.method == 'POST':
         user = EmailBackEnd.authenticate(request,
@@ -322,12 +394,17 @@ def Search_Passes(request):
     if request.method == "GET":
         query = request.GET.get('query', '')
         if query:
-            userpasses = Passes.objects.filter(passnumber__icontains=query)
-            messages.success(request, "Search against " + query)
-            return render(request, 'search-passes.html', {'userpasses': userpasses})
+            try:
+                userpasses = Passes.objects.filter(passnumber__icontains=query)
+                if userpasses:
+                    messages.success(request, "Search results for pass number: " + query)
+                else:
+                    messages.error(request, "No passes found for number: " + query)
+                return render(request, 'search-passes.html', {'userpasses': userpasses})
+            except Exception as e:
+                messages.error(request, f"Error searching for pass: {str(e)}")
+                return redirect('customer')
         else:
-
-            print("No Record Found")
             return render(request, 'search-passes.html', {})
 
 
@@ -341,3 +418,9 @@ def data_between_dates(request):
         userpasses = []
 
     return render(request, 'data_between_dates.html', {'userpasses': userpasses})
+
+
+def customer(request):
+    """View function for the customer portal page"""
+    categories = Category.objects.all()
+    return render(request, 'customer.html', {'categories': categories})

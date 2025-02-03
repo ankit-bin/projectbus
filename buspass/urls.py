@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
@@ -10,8 +9,12 @@ urlpatterns = [
     path('base/', views.BASE, name='base'),
     path('login', views.LOGIN, name='login'),
     path('doLogout', views.doLogout, name='logout'),
-   
 
+
+    path('customer/', views.customer, name='customer'),
+    path('customer/viewpass/', views.view_customer_pass, name='viewpass'),
+    path('customer/addpass/', views.add_customer_pass, name='addpass'),
+    
     
 
     path('Dashboard', views.DASHBOARD, name='dashboard'),    
