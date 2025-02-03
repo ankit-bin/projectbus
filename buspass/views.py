@@ -390,6 +390,8 @@ def VIEW_PASSES(request, id):
     return render(request, 'view-passes.html', context)
 
 
+# Admin search function (restored)
+@login_required(login_url='/')
 def Search_Passes(request):
     if request.method == "GET":
         query = request.GET.get('query', '')
@@ -400,12 +402,13 @@ def Search_Passes(request):
                     messages.success(request, "Search results for pass number: " + query)
                 else:
                     messages.error(request, "No passes found for number: " + query)
-                return render(request, 'search-passes.html', {'userpasses': userpasses})
             except Exception as e:
                 messages.error(request, f"Error searching for pass: {str(e)}")
-                return redirect('customer')
+                userpasses = []
         else:
-            return render(request, 'search-passes.html', {})
+            userpasses = []
+        
+        return render(request, 'admin-search.html', {'userpasses': userpasses})
 
 
 def data_between_dates(request):
@@ -424,3 +427,22 @@ def customer(request):
     """View function for the customer portal page"""
     categories = Category.objects.all()
     return render(request, 'customer.html', {'categories': categories})
+
+
+# New customer search function
+def customer_search_passes(request):
+    if request.method == "GET":
+        query = request.GET.get('query', '')
+        if query:
+            try:
+                userpasses = Passes.objects.filter(passnumber__icontains=query)
+                if userpasses:
+                    messages.success(request, "Search results for pass number: " + query)
+                else:
+                    messages.error(request, "No passes found for number: " + query)
+                return render(request, 'customer-search-results.html', {'userpasses': userpasses})
+            except Exception as e:
+                messages.error(request, f"Error searching for pass: {str(e)}")
+                return redirect('customer')
+        else:
+            return render(request, 'customer-search-results.html', {})

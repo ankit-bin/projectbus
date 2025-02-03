@@ -47,7 +47,7 @@
                         <h5 class="mb-0">Search Pass</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{% url 'search_passes' %}" method="GET">
+                        <form action="{% url 'customer_search_passes' %}" method="GET">
                             {% csrf_token %}
                             <div class="form-group mb-3">
                                 <label for="query">Pass Number</label>

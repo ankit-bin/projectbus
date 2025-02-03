@@ -46,6 +46,7 @@ urlpatterns = [
 
      #search passes
      path('Search', views.Search_Passes, name='search_passes'),
+     path('customer/search/', views.customer_search_passes, name='customer_search_passes'),
 
       path('data-between-dates/', views.data_between_dates, name='data_between_dates'),
 
