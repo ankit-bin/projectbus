@@ -7,6 +7,9 @@ from app.models import CustomUser, Category, Passes, Page
 from django.contrib.auth import get_user_model
 import random
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
 
 from django.db.models import Count
 from django.utils import timezone
@@ -56,6 +59,9 @@ def add_customer_pass(request):
             from_date = request.POST.get('from_date')
             to_date = request.POST.get('to_date')
             cost = request.POST.get('cost')
+            # Convert cost to number (integer) before storing
+            if cost:
+                cost = int(float(cost))
 
             # Generate random pass number
             pass_number = random.randint(100000000, 999999999)
@@ -281,6 +287,9 @@ def ADD_PASSSES(request):
         fromdate = request.POST.get('fromdate')
         todate = request.POST.get('todate')
         cost = request.POST.get('cost')
+        # Convert cost to number (integer)
+        if cost:
+            cost = int(float(cost))
 
         categoryid = Category.objects.get(id=category_id)
         userpassdetail = Passes(fullname=fullname,
@@ -395,9 +404,13 @@ def VIEW_PASSES(request, id):
 def Search_Passes(request):
     if request.method == "GET":
         query = request.GET.get('query', '')
+        userpasses = []
         if query:
             try:
-                userpasses = Passes.objects.filter(passnumber__icontains=query)  # Fixed missing parenthesis
+                if query.isdigit():
+                    userpasses = Passes.objects.filter(passnumber=int(query))
+                else:
+                    userpasses = []
                 if userpasses:
                     messages.success(request, "Search results for pass number: " + query)
                 else:
@@ -407,7 +420,6 @@ def Search_Passes(request):
                 userpasses = []
         else:
             userpasses = []
-        
         return render(request, 'admin-search.html', {'userpasses': userpasses})
 
 
@@ -435,14 +447,17 @@ def customer_search_passes(request):
         query = request.GET.get('query', '')
         if query:
             try:
-                userpasses = Passes.objects.filter(passnumber__icontains=query)  # Fixed missing parenthesis
+                if query.isdigit():
+                    userpasses = Passes.objects.filter(passnumber=int(query))
+                else:
+                    userpasses = []
                 if userpasses:
                     messages.success(request, "Search results for pass number: " + query)
                 else:
                     messages.error(request, "No passes found for number: " + query)
                 return render(request, 'customer-search-results.html', {'userpasses': userpasses})
             except Exception as e:
-                messages.error(request, f"Error searching for pass: {str(e)}")
+                messages.error(request, f"Error searching for pass: " + str(e))
                 return redirect('customer')
         else:
             return render(request, 'customer-search-results.html', {})
@@ -479,3 +494,18 @@ def editpass(request, id):
     # GET => Render form with current data
     context = {'pass': user_pass}
     return render(request, 'edit_pass.html', context)
+
+def calculate_fare(request):
+    source = request.GET.get('source')
+    destination = request.GET.get('destination')
+    if source and destination:
+        geolocator = Nominatim(user_agent="buspass")
+        location_source = geolocator.geocode(source)
+        location_destination = geolocator.geocode(destination)
+        if location_source and location_destination:
+            coords_1 = (location_source.latitude, location_source.longitude)
+            coords_2 = (location_destination.latitude, location_destination.longitude)
+            distance = geodesic(coords_1, coords_2).km
+            fare = round(distance * 3, 2)
+            return JsonResponse({'fare': fare})
+    return JsonResponse({'fare': 0})

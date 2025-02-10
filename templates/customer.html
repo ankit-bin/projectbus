@@ -124,7 +124,11 @@
                                 <label for="to_date">To Date</label>
                                 <input type="date" class="form-control" id="to_date" name="to_date" required>
                             </div>
-                            <input type="hidden" name="cost" value="5000">
+                            <div class="form-group mb-3">
+                                <label for="cost">Cost</label>
+                                <input type="number" class="form-control" id="costInput" name="cost" readonly>
+                                <button type="button" class="btn btn-secondary" id="calculateFareBtn">Calculate Fare</button>
+                            </div>
                             <button type="submit" class="btn btn-success">Apply for Pass</button>
                         </form>
                     </div>
@@ -136,5 +140,23 @@
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+    document.getElementById('calculateFareBtn').addEventListener('click', function() {
+        const source = document.getElementById('source').value;
+        const destination = document.getElementById('destination').value;
+        if (source && destination) {
+            fetch(`/calculate-fare/?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('costInput').value = data.fare;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            alert('Please enter both source and destination');
+        }
+    });
+    </script>
 </body>
 </html>

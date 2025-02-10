@@ -51,5 +51,8 @@ urlpatterns = [
       path('data-between-dates/', views.data_between_dates, name='data_between_dates'),
     # New route for editing a pass
     path('editpass/<str:id>/', views.editpass, name='editpass'),
+    
+    # New route for calculating fare
+    path('calculate-fare/', views.calculate_fare, name='calculate_fare'),
 
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
