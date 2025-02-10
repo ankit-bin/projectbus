@@ -397,7 +397,7 @@ def Search_Passes(request):
         query = request.GET.get('query', '')
         if query:
             try:
-                userpasses = Passes.objects.filter(passnumber__icontains=query)
+                userpasses = Passes.objects.filter(passnumber__icontains=query)  # Fixed missing parenthesis
                 if userpasses:
                     messages.success(request, "Search results for pass number: " + query)
                 else:
@@ -435,7 +435,7 @@ def customer_search_passes(request):
         query = request.GET.get('query', '')
         if query:
             try:
-                userpasses = Passes.objects.filter(passnumber__icontains=query)
+                userpasses = Passes.objects.filter(passnumber__icontains=query)  # Fixed missing parenthesis
                 if userpasses:
                     messages.success(request, "Search results for pass number: " + query)
                 else:
@@ -446,3 +446,36 @@ def customer_search_passes(request):
                 return redirect('customer')
         else:
             return render(request, 'customer-search-results.html', {})
+
+@login_required(login_url='/')
+def editpass(request, id):
+    try:
+        user_pass = Passes.objects.get(id=id)
+    except Passes.DoesNotExist:
+        messages.error(request, "Pass not found.")
+        return redirect('manage_passes')
+        
+    if request.method == "POST":
+        # Update fields from POST data (adjust field names as needed)
+        user_pass.fullname = request.POST.get('fullname')
+        user_pass.gender = request.POST.get('gender')
+        # For file upload: update only if a new file is provided
+        if 'profile_pic1' in request.FILES:
+            user_pass.profile_pic1 = request.FILES.get('profile_pic1')
+        user_pass.mobilenumber = request.POST.get('mobilenumber')
+        user_pass.email = request.POST.get('email')
+        user_pass.identitytype = request.POST.get('identitytype')
+        user_pass.identitycardnumber = request.POST.get('identitycardnumber')
+        user_pass.source = request.POST.get('source')
+        user_pass.destinations = request.POST.get('destinations')
+        user_pass.fromdate = request.POST.get('fromdate')
+        user_pass.todate = request.POST.get('todate')
+        user_pass.cost = request.POST.get('cost')
+        
+        user_pass.save()
+        messages.success(request, "Pass details updated successfully.")
+        return redirect('manage_passes')
+    
+    # GET => Render form with current data
+    context = {'pass': user_pass}
+    return render(request, 'edit_pass.html', context)

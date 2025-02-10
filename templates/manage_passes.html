@@ -30,6 +30,7 @@
                             <td>
                                 <a href="{% url 'view_passes' i.id %}" class="btn btn-primary">View</a>
                                 <a href="{% url 'delete_passes' i.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
+                                <a href="{% url 'editpass' i.id %}" class="btn btn-primary">Edit Pass</a>
                             </td>
                         </tr>
                         {% endfor %}

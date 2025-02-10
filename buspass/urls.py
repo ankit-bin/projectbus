@@ -49,5 +49,7 @@ urlpatterns = [
      path('customer/search/', views.customer_search_passes, name='customer_search_passes'),
 
       path('data-between-dates/', views.data_between_dates, name='data_between_dates'),
+    # New route for editing a pass
+    path('editpass/<str:id>/', views.editpass, name='editpass'),
 
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

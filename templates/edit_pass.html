@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h2>Edit Pass</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Full Name -->
+    <div class="form-group">
+      <label for="fullname">Full Name</label>
+      <input type="text" class="form-control" id="fullname" name="fullname" value="{{ pass.fullname }}">
+    </div>
+    <!-- Gender -->
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <input type="text" class="form-control" id="gender" name="gender" value="{{ pass.gender }}">
+    </div>
+    <!-- Profile Picture -->
+    <div class="form-group">
+      <label for="profile_pic1">Profile Picture</label>
+      <input type="file" class="form-control" id="profile_pic1" name="profile_pic1">
+      <p>Current file: {{ pass.profile_pic1.url }}</p>
+    </div>
+    <!-- Mobile Number -->
+    <div class="form-group">
+      <label for="mobilenumber">Mobile Number</label>
+      <input type="text" class="form-control" id="mobilenumber" name="mobilenumber" value="{{ pass.mobilenumber }}">
+    </div>
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" value="{{ pass.email }}">
+    </div>
+    <!-- Identity Type -->
+    <div class="form-group">
+      <label for="identitytype">Identity Type</label>
+      <input type="text" class="form-control" id="identitytype" name="identitytype" value="{{ pass.identitytype }}">
+    </div>
+    <!-- Identity Card Number -->
+    <div class="form-group">
+      <label for="identitycardnumber">Identity Card Number</label>
+      <input type="text" class="form-control" id="identitycardnumber" name="identitycardnumber" value="{{ pass.identitycardnumber }}">
+    </div>
+    <!-- Source -->
+    <div class="form-group">
+      <label for="source">Source</label>
+      <input type="text" class="form-control" id="source" name="source" value="{{ pass.source }}">
+    </div>
+    <!-- Destination(s) -->
+    <div class="form-group">
+      <label for="destinations">Destination(s)</label>
+      <input type="text" class="form-control" id="destinations" name="destinations" value="{{ pass.destinations }}">
+    </div>
+    <!-- From Date -->
+    <div class="form-group">
+      <label for="fromdate">From Date</label>
+      <input type="text" class="form-control" id="fromdate" name="fromdate" value="{{ pass.fromdate }}">
+    </div>
+    <!-- To Date -->
+    <div class="form-group">
+      <label for="todate">To Date</label>
+      <input type="text" class="form-control" id="todate" name="todate" value="{{ pass.todate }}">
+    </div>
+    <!-- Cost -->
+    <div class="form-group">
+      <label for="cost">Cost</label>
+      <input type="number" class="form-control" id="cost" name="cost" value="{{ pass.cost }}">
+    </div>
+    <button type="submit" class="btn btn-success">Save Updates</button>
+  </form>
+</div>
+{% endblock %}
